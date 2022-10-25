@@ -25,7 +25,7 @@ const background = new Sprite({
 const player = new Fighter({
   position: {
     //create a new object for the Sprite class, we give an object as argument for position
-    x: 0,
+    x: 50,
     y: 0,
   },
   velocity: {
@@ -46,12 +46,25 @@ const player = new Fighter({
     jump: { imageSource: "./images/Samurai/Jump.png", framesMax: 2 },
     fall: { imageSource: "./images/Samurai/Fall.png", framesMax: 2 },
     attack1: { imageSource: "./images/Samurai/Attack1.png", framesMax: 6 },
+    takeHit: {
+      imageSource: "./images/Samurai/Take Hit - white silhouette.png",
+      framesMax: 4,
+    },
+    death: { imageSource: "./images/Samurai/Death.png", framesMax: 6 },
+  },
+  attackBox: {
+    offset: {
+      x: 100,
+      y: 50,
+    },
+    width: 160,
+    height: 50,
   },
 });
 const enemy = new Fighter({
   position: {
     //create a new object for the Sprite class, we give an object as argument for position
-    x: 400,
+    x: 900,
     y: 100,
   },
   velocity: {
@@ -66,13 +79,23 @@ const enemy = new Fighter({
   imageSource: "./images/Bushi/Idle.png",
   framesMax: 4,
   scale: 2.5,
-  offset: { x: 215, y: 145 },
+  offset: { x: 215, y: 160 },
   sprites: {
     idle: { imageSource: "./images/Bushi/Idle.png", framesMax: 4 },
     run: { imageSource: "./images/Bushi/Run.png", framesMax: 8 },
     jump: { imageSource: "./images/Bushi/Jump.png", framesMax: 2 },
     fall: { imageSource: "./images/Bushi/Fall.png", framesMax: 2 },
     attack1: { imageSource: "./images/Bushi/Attack1.png", framesMax: 4 },
+    takeHit: { imageSource: "./images/Bushi/Take hit.png", framesMax: 3 },
+    death: { imageSource: "./images/Bushi/Death.png", framesMax: 7 },
+  },
+  attackBox: {
+    offset: {
+      x: -170,
+      y: 50,
+    },
+    width: 170,
+    height: 50,
   },
 });
 
@@ -138,39 +161,62 @@ function animate() {
   //& enemy movement
   if (keys.ArrowLeft.pressed && enemy.lastKey === "ArrowLeft") {
     enemy.velocity.x = -5;
+    enemy.switchSprite("run");
   } else if (keys.ArrowRight.pressed && enemy.lastKey === "ArrowRight") {
     enemy.velocity.x = 5;
+    enemy.switchSprite("run");
+  } else {
+    enemy.switchSprite("idle");
   }
-  //detect for collision
+
+  //& jumping
+  if (enemy.velocity.y < 0) {
+    enemy.switchSprite("jump");
+  } else if (enemy.velocity.y > 0) {
+    enemy.switchSprite("fall");
+  }
+
+  //& detect for collision & enemy gets hit
   if (
-    // player.attackBox.position.x + player.attackBox.width >= enemy.position.x &&
-    // player.attackBox.position.x <= enemy.position.x + enemy.width &&
-    // player.attackBox.position.y + player.attackBox.height >= enemy.position.y &&
-    // player.attackBox.position.y <= enemy.position.y + enemy.height &&
     boxCollision({
       box1: player,
       box2: enemy,
     }) &&
-    player.isAttacking
+    player.isAttacking &&
+    player.currentFrame === 4
     //player.attackBox.position.y (top of our fighter) + player.attackBox.height = bottom of our fighter
   ) {
+    enemy.takeHit();
     player.isAttacking = false; // to substract the accurate amount of health form our enemy. it only pressed spacebar once
-    enemy.health -= 20;
+
     document.querySelector("#enemyStatus").style.width = enemy.health + "%";
   }
+
+  //& if player misses
+  if (player.isAttacking && player.currentFrame === 4) {
+    player.isAttacking = false;
+  }
+
+  //& where the player gets hit
   if (
     boxCollision({
       box1: enemy,
       box2: player,
     }) &&
-    enemy.isAttacking
+    enemy.isAttacking &&
+    player.currentFrame === 2 //when the frame with the sword is activated
   ) {
+    player.takeHit();
     enemy.isAttacking = false;
-    player.health -= 20;
     document.querySelector("#playerStatus").style.width = player.health + "%";
   }
 
-  //end game based on health
+  //& if enemy misses
+  if (enemy.isAttacking && enemy.currentFrame === 2) {
+    enemy.isAttacking = false;
+  }
+
+  //& end game based on health
   if (enemy.health <= 0 || player.health <= 0) {
     setWinner({ player, enemy, timerId });
   }
@@ -179,38 +225,43 @@ animate();
 //*move characters with event listeners
 window.addEventListener("keydown", (event) => {
   //   console.log(event.key); // to look for the key property we're interested into
-  switch (event.key) {
-    case "d":
-      keys.d.pressed = true; //moving one pixel for every frame we loop over within our animation loop
-      player.lastKey = "d"; //monitor which key we pressed last
-      break;
-    case "a":
-      keys.a.pressed = true; //moving backward one pixel for every frame we loop overthe x axis
-      player.lastKey = "a";
-      break;
-    case "w": //adding jump effect
-      player.velocity.y = -20;
-      break;
-    case " ": //in case we hit spacebar
-      player.attack(); //call the attack method in class Fighter
-      break;
-
-    //setting enemy keys
-    case "ArrowRight":
-      keys.ArrowRight.pressed = true;
-      enemy.lastKey = "ArrowRight"; //so that we don't alter the property of the main fighter
-      //we made lastKey a property of the class object Fighter
-      break;
-    case "ArrowLeft":
-      keys.ArrowLeft.pressed = true;
-      enemy.lastKey = "ArrowLeft";
-      break;
-    case "ArrowUp":
-      enemy.velocity.y = -20;
-      break;
-    case "ArrowDown":
-      enemy.isAttacking = true;
-      break;
+  if (!player.dead) {
+    switch (event.key) {
+      case "d":
+        keys.d.pressed = true; //moving one pixel for every frame we loop over within our animation loop
+        player.lastKey = "d"; //monitor which key we pressed last
+        break;
+      case "a":
+        keys.a.pressed = true; //moving backward one pixel for every frame we loop overthe x axis
+        player.lastKey = "a";
+        break;
+      case "w": //adding jump effect
+        player.velocity.y = -20;
+        break;
+      case " ": //in case we hit spacebar
+        player.attack(); //call the attack method in class Fighter
+        break;
+    }
+  }
+  if (!enemy.dead) {
+    switch (event.key) {
+      //setting enemy keys
+      case "ArrowRight":
+        keys.ArrowRight.pressed = true;
+        enemy.lastKey = "ArrowRight"; //so that we don't alter the property of the main fighter
+        //we made lastKey a property of the class object Fighter
+        break;
+      case "ArrowLeft":
+        keys.ArrowLeft.pressed = true;
+        enemy.lastKey = "ArrowLeft";
+        break;
+      case "ArrowUp":
+        enemy.velocity.y = -20;
+        break;
+      case "ArrowDown":
+        enemy.attack();
+        break;
+    }
   }
 });
 window.addEventListener("keyup", (event) => {
