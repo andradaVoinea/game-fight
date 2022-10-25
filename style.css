@@ -1,0 +1,75 @@
+* {
+  box-sizing: border-box;
+  /* so that padding is not messing up the alignmnet of elements */
+}
+.bigContainer {
+  position: relative;
+  display: inline-block;
+  /* needed because divs act as blocks elements and the bar was getting out of the canvas size */
+}
+.smallerContainer {
+  position: absolute;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  padding: 20px;
+}
+.playerBar {
+  position: relative;
+  height: 30px;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+.playerHealth {
+  background-color: yellow;
+  height: 30px;
+  width: 100%;
+}
+.playerAbsolute {
+  position: absolute;
+  background: blue;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+}
+.timer {
+  background-color: red;
+  width: 100px;
+  height: 100px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.enemyBar {
+  position: relative;
+  height: 30px;
+  width: 100%;
+  
+}
+.enemyHealth {
+  background-color: yellow;
+  height: 30px;
+}
+.enemyAbsolute {
+  position: absolute;
+  background: blue;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+.tieScore {
+  position: absolute;
+  color: white;
+  align-items: center;
+  justify-content: center;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: none;
+}

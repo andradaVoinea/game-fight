@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>fighters</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+</head>
+<body>
+  <!-- red container div-->
+ <div class="bigContainer"> 
+  <!-- all elements will be relative to this div -->
+  <!-- place another div inside of it for the health bar -->
+  <!-- smaller red container div -->
+  <div class="smallerContainer">
+    <!-- creating 3 div for the 3 rectangles in the health bar -->
+    <!-- player health -->
+    <div class="playerBar">
+      <div class="playerHealth"></div>
+      <!-- position absolute div -->
+      <div id = "playerStatus" class="playerAbsolute"></div>
+     </div>
+    <!-- timer -->
+    <div id="timer" class="timer"> 10</div>
+    <!-- enemy health -->
+   <div class="enemyBar">
+    <div class="enemyHealth"></div>
+    <!-- position absolute div -->
+    <div id = "enemyStatus" class="enemyAbsolute"></div>
+   </div>
+  </div>
+  <div id="displayText" class="tieScore"> Tie </div>
+  <canvas></canvas>
+ </div>
+ <script src="js/utilities.js"></script>
+ <script src="js/classes.js"></script>
+  <script src="fight.js"></script>
+  <!-- <script src="script.js"></script> -->
+
+</body>
+</html>
