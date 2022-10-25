@@ -1,6 +1,7 @@
 * {
   box-sizing: border-box;
   /* so that padding is not messing up the alignmnet of elements */
+  font-family: "Press Start 2P", cursive;
 }
 .bigContainer {
   position: relative;
@@ -16,46 +17,51 @@
 }
 .playerBar {
   position: relative;
-  height: 30px;
   width: 100%;
   display: flex;
   justify-content: flex-end;
+  border-top: 4px solid #0f766e;
+  border-left: 4px solid #0f766e;
+  border-bottom: 4px solid #0f766e;
 }
 .playerHealth {
-  background-color: yellow;
+  background-color: red;
   height: 30px;
   width: 100%;
 }
 .playerAbsolute {
   position: absolute;
-  background: blue;
+  background: #0d9488;
   top: 0;
   right: 0;
   bottom: 0;
   width: 100%;
 }
 .timer {
-  background-color: red;
+  background-color: #115e59;
   width: 100px;
-  height: 100px;
+  height: 50px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #99f6e4;
+  border: 4px solid #134e4a;
 }
 .enemyBar {
   position: relative;
-  height: 30px;
   width: 100%;
-  
+  border-top: 4px solid #0f766e;
+  border-bottom: 4px solid #0f766e;
+  border-right: 4px solid #0f766e;
 }
 .enemyHealth {
-  background-color: yellow;
+  background-color: red;
   height: 30px;
 }
 .enemyAbsolute {
   position: absolute;
-  background: blue;
+  background: #0d9488;
   top: 0;
   right: 0;
   bottom: 0;

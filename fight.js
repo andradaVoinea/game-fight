@@ -130,6 +130,8 @@ function animate() {
   context.fillRect(0, 0, canvas.width, canvas.height);
   //clear canvas for each frame we're looping over, so that we have the impression of movement, no painting brush
   background.update();
+  context.fillStyle = "rgba(255, 255, 255, 0.15)";
+  context.fillRect(0, 0, canvas.width, canvas.height);
   player.update();
   enemy.update();
   player.velocity.x = 0; //default value for our player's x velocity, so after keys are lifted,
@@ -189,7 +191,9 @@ function animate() {
     enemy.takeHit();
     player.isAttacking = false; // to substract the accurate amount of health form our enemy. it only pressed spacebar once
 
-    document.querySelector("#enemyStatus").style.width = enemy.health + "%";
+    gsap.to("#enemyStatus", {
+      width: enemy.health + "%",
+    });
   }
 
   //& if player misses
@@ -208,7 +212,9 @@ function animate() {
   ) {
     player.takeHit();
     enemy.isAttacking = false;
-    document.querySelector("#playerStatus").style.width = player.health + "%";
+    gsap.to("#playerStatus", {
+      width: player.health + "%",
+    });
   }
 
   //& if enemy misses
