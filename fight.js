@@ -36,6 +36,17 @@ const player = new Fighter({
     x: 0,
     y: 0,
   },
+  imageSource: "./images/Samurai/Idle.png",
+  framesMax: 8,
+  scale: 2.5,
+  offset: { x: 215, y: 145 },
+  sprites: {
+    idle: { imageSource: "./images/Samurai/Idle.png", framesMax: 8 },
+    run: { imageSource: "./images/Samurai/Run.png", framesMax: 8 },
+    jump: { imageSource: "./images/Samurai/Jump.png", framesMax: 2 },
+    fall: { imageSource: "./images/Samurai/Fall.png", framesMax: 2 },
+    attack1: { imageSource: "./images/Samurai/Attack1.png", framesMax: 6 },
+  },
 });
 const enemy = new Fighter({
   position: {
@@ -51,6 +62,17 @@ const enemy = new Fighter({
   offset: {
     x: -50,
     y: 0,
+  },
+  imageSource: "./images/Bushi/Idle.png",
+  framesMax: 4,
+  scale: 2.5,
+  offset: { x: 215, y: 145 },
+  sprites: {
+    idle: { imageSource: "./images/Bushi/Idle.png", framesMax: 4 },
+    run: { imageSource: "./images/Bushi/Run.png", framesMax: 8 },
+    jump: { imageSource: "./images/Bushi/Jump.png", framesMax: 2 },
+    fall: { imageSource: "./images/Bushi/Fall.png", framesMax: 2 },
+    attack1: { imageSource: "./images/Bushi/Attack1.png", framesMax: 4 },
   },
 });
 
@@ -92,14 +114,27 @@ function animate() {
   enemy.velocity.x = 0;
 
   //& player movement
+
   if (keys.a.pressed && player.lastKey === "a") {
     player.velocity.x = -5; //movement of 5 pixels per frame
+    player.switchSprite("run");
   } else if (keys.d.pressed && player.lastKey === "d") {
     player.velocity.x = 5;
-  } //for each key of animation we're going to listen for weatherone of our keys is pressed down
+    player.switchSprite("run");
+  } else {
+    player.switchSprite("idle");
+  }
+  //for each key of animation we're going to listen for weather one of our keys is pressed down
   //had a problem before, when I had a and d pressed, but lifted just one of them, the player would stop
   //because at the eventListener I used 1 and 0 to stop or continue moving, so I changed it to
   //true or false
+  //& jumping
+  if (player.velocity.y < 0) {
+    player.switchSprite("jump");
+  } else if (player.velocity.y > 0) {
+    player.switchSprite("fall");
+  }
+
   //& enemy movement
   if (keys.ArrowLeft.pressed && enemy.lastKey === "ArrowLeft") {
     enemy.velocity.x = -5;
